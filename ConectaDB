@@ -1,0 +1,36 @@
+/*Clase para la conexion entre Netbeans y MySQL Community Server*/
+
+
+package ConexionBD;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+/**
+ *
+ * @author Dario
+ */
+public class ConectaBD {
+    
+    ResultSet rsDatosResultado;
+    PreparedStatement psPrepararSentencia;
+    Statement stSentenciaSQL;
+    
+    public Connection getConnection(){
+        Connection cn = null;
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+            cn = DriverManager.getConnection("jdbc:mysql://localhost/pruebaproyecto?useSSL=false", "root", "dario123lol");
+        } catch (SQLException e){
+            System.out.println("Error: " + e.getMessage());
+        } catch (Exception e1){
+            System.out.println("Error: " + e1.getMessage());
+        }
+    return cn;
+    }
+       
+}
