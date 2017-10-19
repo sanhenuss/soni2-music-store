@@ -1,0 +1,69 @@
+create database pruebaproyecto;
+
+use pruebaproyecto;
+
+CREATE TABLE Login (
+	usuario		varchar(20) not null unique,
+    contra		varchar(20) not null,
+	tipousuario	varchar(20) not null,
+    primary key (usuario)
+)  ENGINE = InnoDB;
+
+CREATE TABLE Marca_Violin(
+	codigo_marca_violin	varchar(14) not null unique,
+    marca_violin	varchar(50) not null,
+    primary key (codigo_marca_violin)
+) ENGINE = InnoDB;
+
+select * from Marca_Violin;
+
+
+drop table Marca_Violin;
+
+INSERT INTO Marca_Violin (codigo_marca_violin, marca_violin) values ('marcaviolin001', 'Stentor');
+INSERT INTO Marca_Violin (codigo_marca_violin, marca_violin) values ('marcaviolin002', 'Windsor'); 
+INSERT INTO Marca_Violin (codigo_marca_violin, marca_violin) values ('marcaviolin003', 'Primavera'); 
+INSERT INTO Marca_Violin (codigo_marca_violin, marca_violin) values ('marcaviolin004', 'Mendini'); 
+INSERT INTO Marca_Violin (codigo_marca_violin, marca_violin) values ('marcaviolin005', 'Cecilio'); 
+INSERT INTO Marca_Violin (codigo_marca_violin, marca_violin) values ('marcaviolin006', 'Cremona'); 
+INSERT INTO Marca_Violin (codigo_marca_violin, marca_violin) values ('marcaviolin007', 'Franz Hoffmann'); 
+INSERT INTO Marca_Violin (codigo_marca_violin, marca_violin) values ('marcaviolin008', 'Carlo Lamberti'); 
+INSERT INTO Marca_Violin (codigo_marca_violin, marca_violin) values ('marcaviolin009', 'Scott Cao'); 
+INSERT INTO Marca_Violin (codigo_marca_violin, marca_violin) values ('marcaviolin010', 'Knilling'); 
+INSERT INTO Marca_Violin (codigo_marca_violin, marca_violin) values ('marcaviolin011', 'Yamaha'); 
+INSERT INTO Marca_Violin (codigo_marca_violin, marca_violin) values ('marcaviolin012', 'All Days Music (ADM)'); 
+INSERT INTO Marca_Violin (codigo_marca_violin, marca_violin) values ('marcaviolin013', 'Klaus Mueller'); 
+INSERT INTO Marca_Violin (codigo_marca_violin, marca_violin) values ('marcaviolin014', 'Merano'); 
+INSERT INTO Marca_Violin (codigo_marca_violin, marca_violin) values ('marcaviolin015', 'Kinglos'); 
+INSERT INTO Marca_Violin (codigo_marca_violin, marca_violin) values ('marcaviolin016', 'Stradivarius');
+
+CREATE TABLE Categoria_Violin(
+	codigo_categoria_violin varchar(18) not null unique,
+    categoria_violin varchar(50) not null,
+    primary key (codigo_categoria_violin)
+) ENGINE = InnoDB;
+
+INSERT INTO Categoria_Violin (codigo_categoria_violin, categoria_violin) values ('categoriaviolin001', 'De estudio');
+INSERT INTO Categoria_Violin (codigo_categoria_violin, categoria_violin) values ('categoriaviolin002', 'Semi profesional');
+INSERT INTO Categoria_Violin (codigo_categoria_violin, categoria_violin) values ('categoriaviolin003', 'Profesional');
+
+
+CREATE TABLE IngresarViolin(
+	codigo_violin varchar(9) not null unique,
+    marca_violin varchar(50) not null,
+    categoria_violin varchar(50) not null,
+    color_violin varchar(50) not null,
+    tamano_violin varchar(50) not null,
+    medida_violin varchar(50) not null,
+    edad_promedio_violin varchar(50),
+    precio_violin double,
+    cantidad_violin int,
+    direccion_imagen_violin varchar(150),
+    foto_violin longblob,
+    estado varchar(50) default 'habilitado',
+    primary key (codigo_violin)
+) ENGINE = InnoDB;
+
+drop table ingresarviolin;
+
+select*from ingresarviolin;
