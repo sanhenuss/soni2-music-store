@@ -1,5 +1,14 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package Vistas;
 
+import Login.Login;
+import Ingresos.CrearUsuario;
+import HablilitarDeshabilitar.HabilitarDeshabilitarViolin;
+import Registro.RegistroVentasAdministrador;
 import javax.swing.JOptionPane;
 
 /**
@@ -34,8 +43,8 @@ public class MenuAdministrador extends javax.swing.JFrame {
         btnEliminarRegistro = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         btnAtras = new javax.swing.JButton();
-        btnIngresarAccesorio = new javax.swing.JButton();
         btnHabilitarDeshabilitar = new javax.swing.JButton();
+        btnRegistroVentas = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -99,19 +108,19 @@ public class MenuAdministrador extends javax.swing.JFrame {
             }
         });
 
-        btnIngresarAccesorio.setFont(new java.awt.Font("Times New Roman", 0, 16)); // NOI18N
-        btnIngresarAccesorio.setText("Ingresar Accesorio");
-        btnIngresarAccesorio.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnIngresarAccesorioActionPerformed(evt);
-            }
-        });
-
         btnHabilitarDeshabilitar.setFont(new java.awt.Font("Times New Roman", 0, 16)); // NOI18N
         btnHabilitarDeshabilitar.setText("Habilitar/Deshabilitar Registro");
         btnHabilitarDeshabilitar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnHabilitarDeshabilitarActionPerformed(evt);
+            }
+        });
+
+        btnRegistroVentas.setFont(new java.awt.Font("Times New Roman", 0, 16)); // NOI18N
+        btnRegistroVentas.setText("Registro de Ventas");
+        btnRegistroVentas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistroVentasActionPerformed(evt);
             }
         });
 
@@ -127,16 +136,15 @@ public class MenuAdministrador extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addGap(61, 61, 61)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(btnIngresarInstrumento, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnCrearUsuario, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnConsultas, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnModificarRegistro, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnEliminarRegistro, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnIngresarAccesorio, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnHabilitarDeshabilitar))
-                    .addComponent(jLabel1))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnIngresarInstrumento, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnCrearUsuario, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnConsultas, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnModificarRegistro, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnEliminarRegistro, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnHabilitarDeshabilitar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1)
+                    .addComponent(btnRegistroVentas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(50, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -149,8 +157,6 @@ public class MenuAdministrador extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(btnIngresarInstrumento)
                 .addGap(18, 18, 18)
-                .addComponent(btnIngresarAccesorio)
-                .addGap(18, 18, 18)
                 .addComponent(btnConsultas)
                 .addGap(18, 18, 18)
                 .addComponent(btnModificarRegistro)
@@ -158,6 +164,8 @@ public class MenuAdministrador extends javax.swing.JFrame {
                 .addComponent(btnEliminarRegistro)
                 .addGap(18, 18, 18)
                 .addComponent(btnHabilitarDeshabilitar)
+                .addGap(18, 18, 18)
+                .addComponent(btnRegistroVentas)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSalir)
@@ -200,14 +208,10 @@ public class MenuAdministrador extends javax.swing.JFrame {
         // TODO add your handling code here:
         
         dispose();
-        FamiliaInstrumentos familiainstrumentos = new FamiliaInstrumentos();
+        IngresarFamiliaInstrumentos familiainstrumentos = new IngresarFamiliaInstrumentos();
         familiainstrumentos.setVisible(true);
         
     }                                                      
-
-    private void btnIngresarAccesorioActionPerformed(java.awt.event.ActionEvent evt) {                                                     
-        // TODO add your handling code here:
-    }                                                    
 
     private void btnConsultasActionPerformed(java.awt.event.ActionEvent evt) {                                             
         // TODO add your handling code here:
@@ -239,9 +243,19 @@ public class MenuAdministrador extends javax.swing.JFrame {
     private void btnHabilitarDeshabilitarActionPerformed(java.awt.event.ActionEvent evt) {                                                         
         // TODO add your handling code here:
         
-        HabilitarDeshabilitarViolin habilitardeshabilitarviolin = new HabilitarDeshabilitarViolin();
-        habilitardeshabilitarviolin.setVisible(true);
+        dispose();
+        HabilitarDeshabilitar habilitardeshabilitar = new HabilitarDeshabilitar();
+        habilitardeshabilitar.setVisible(true);
     }                                                        
+
+    private void btnRegistroVentasActionPerformed(java.awt.event.ActionEvent evt) {                                                  
+        // TODO add your handling code here:
+        
+        dispose();
+        RegistroVentasAdministrador registroventas = new RegistroVentasAdministrador();
+        registroventas.setVisible(true);
+        
+    }                                                 
 
     /**
      * @param args the command line arguments
@@ -284,9 +298,9 @@ public class MenuAdministrador extends javax.swing.JFrame {
     private javax.swing.JButton btnCrearUsuario;
     private javax.swing.JButton btnEliminarRegistro;
     private javax.swing.JButton btnHabilitarDeshabilitar;
-    private javax.swing.JButton btnIngresarAccesorio;
     private javax.swing.JButton btnIngresarInstrumento;
     private javax.swing.JButton btnModificarRegistro;
+    private javax.swing.JButton btnRegistroVentas;
     private javax.swing.JButton btnSalir;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration                   
