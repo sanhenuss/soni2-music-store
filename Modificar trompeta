@@ -1,0 +1,558 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package Modificar;
+
+import Consultas.ConsultaUsuario;
+import ConexionBD.ConectaBD;
+import Vistas.ModificarViento;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import static java.sql.DriverManager.getConnection;
+import java.sql.ResultSet;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
+
+/**
+ *
+ * @author Dario
+ */
+public class ModificarTrompeta extends javax.swing.JFrame {
+    
+    ConectaBD con = new ConectaBD();
+    Connection cn = con.getConnection();
+    ResultSet rs;
+    /**
+     * Creates new form IngresoViolin
+     */
+    public ModificarTrompeta() {
+        initComponents();
+        cargarCodigoTrompeta();
+        cargarMarcaTrompeta();
+        cargarTipoTrompeta();
+        setLocationRelativeTo(this);
+        mostrarTabla();
+        setResizable(false);
+        bloquearCampos();
+        btnSeleccionar.setEnabled(true);
+        btnModificar.setEnabled(false);
+        btnCancelar.setEnabled(false);
+    }
+    
+    public void bloquearCampos() {
+        cbxTipoTrompeta.setEnabled(false);
+        cbxMarcaTrompeta.setEnabled(false);
+        txtColorTrompeta.setEditable(false);
+        txtTamanoTrompeta.setEditable(false);
+        txtCantidadPistonesTrompeta.setEditable(false);
+        txtPrecioTrompeta.setEditable(false);
+        txtCantidadTrompeta.setEditable(false);
+        txtDireccionImagen.setEditable(false);
+    }
+    
+    public void desbloquearCampos() {
+        cbxTipoTrompeta.setEnabled(true);
+        cbxMarcaTrompeta.setEnabled(true);
+        txtColorTrompeta.setEditable(true);
+        txtTamanoTrompeta.setEditable(true);
+        txtCantidadPistonesTrompeta.setEditable(true);
+        txtPrecioTrompeta.setEditable(true);
+        txtCantidadTrompeta.setEditable(true);
+        txtDireccionImagen.setEditable(false);
+    }
+    
+    
+    public void cargarCodigoTrompeta(){
+        String sql = "select codigo_trompeta from Trompeta where estado = 'habilitado'";
+        Statement st;
+        try {
+            st = cn.createStatement();
+            rs = st.executeQuery(sql);
+            while(rs.next()){
+                cbxCodigoTrompeta.addItem(rs.getString(1));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ConsultaUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void cargarDatos(ResultSet rs) throws SQLException, IOException  {
+        String sql2="select tipo_trompeta, marca_trompeta, color_trompeta, tamano_trompeta, cantidad_pistones_trompeta, precio_trompeta, cantidad_trompeta, direccion_imagen_trompeta, foto_trompeta from Trompeta where codigo_trompeta='"+cbxCodigoTrompeta.getSelectedItem()+"'";
+        Statement st;
+        
+        try {
+            st = cn.createStatement();
+            rs = st.executeQuery(sql2);
+            while(rs.next()){
+                cbxTipoTrompeta.setSelectedItem(rs.getString(1));
+                cbxMarcaTrompeta.setSelectedItem(rs.getString(2));
+                txtColorTrompeta.setText(rs.getString(3));
+                txtTamanoTrompeta.setText(rs.getString(4));
+                txtCantidadPistonesTrompeta.setText(rs.getString(5));
+                txtPrecioTrompeta.setText(rs.getString(6));
+                txtCantidadTrompeta.setText(rs.getString(7));
+                txtDireccionImagen.setText(rs.getString(8));
+                
+                ByteArrayOutputStream output = new ByteArrayOutputStream();
+                InputStream datos = rs.getBinaryStream(9);
+                
+                Image foto = getToolkit().getImage(txtDireccionImagen.getText());
+                foto = foto.getScaledInstance(233, 280, Image.SCALE_DEFAULT);
+                
+                int temp = datos.read();
+        
+                while(temp >= 0){
+                    output.write((char)temp);
+                    temp = datos.read();
+                }
+                
+                lblTrompeta.setIcon(new ImageIcon(foto));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ConsultaUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+    }
+    
+    public void cargarMarcaTrompeta(){
+        String sql = "select marca_trompeta from Marca_Trompeta";
+        Statement st;
+        ResultSet rs;
+        try {
+            st = cn.createStatement();
+            rs = st.executeQuery(sql);
+            while(rs.next()){
+                cbxMarcaTrompeta.addItem(rs.getString(1));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ConsultaUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void cargarTipoTrompeta(){
+        String sql = "select tipo_trompeta from Tipo_Trompeta";
+        Statement st;
+        ResultSet rs;
+        try {
+            st = cn.createStatement();
+            rs = st.executeQuery(sql);
+            while(rs.next()){
+                cbxTipoTrompeta.addItem(rs.getString(1));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ConsultaUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    void mostrarTabla(){
+        DefaultTableModel modelo = new DefaultTableModel();
+        modelo.addColumn("Codigo");
+        modelo.addColumn("Tipo");
+        modelo.addColumn("Marca");
+        modelo.addColumn("N° Pistones");
+        modelo.addColumn("Precio S/.");
+        modelo.addColumn("Cantidad disponible");
+        tblTrompeta.setModel(modelo);
+        
+        String sql = "select codigo_trompeta, tipo_trompeta, marca_trompeta, cantidad_pistones_trompeta, precio_trompeta, cantidad_trompeta from Trompeta where estado = 'habilitado'";
+        
+        String datos[] = new String [6];
+        Statement st;
+        ResultSet rs;
+        try {
+            st = cn.createStatement();
+            rs = st.executeQuery(sql);
+            while(rs.next()){
+                datos[0] = rs.getString(1);
+                datos[1] = rs.getString(2);
+                datos[2] = rs.getString(3);
+                datos[3] = rs.getString(4);
+                datos[4] = rs.getString(5);
+                datos[5] = rs.getString(6);
+                modelo.addRow(datos);
+            }
+            tblTrompeta.setModel(modelo);
+        } catch (SQLException ex) {
+            Logger.getLogger(ConsultaUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
+    private void initComponents() {
+
+        jLabel1 = new javax.swing.JLabel();
+        btnAtras = new javax.swing.JButton();
+        btnSalir = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        cbxCodigoTrompeta = new javax.swing.JComboBox<>();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        lblTrompeta = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        txtTamanoTrompeta = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        txtCantidadTrompeta = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblTrompeta = new javax.swing.JTable();
+        txtDireccionImagen = new javax.swing.JTextField();
+        txtColorTrompeta = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        txtPrecioTrompeta = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
+        btnSeleccionar = new javax.swing.JButton();
+        btnModificar = new javax.swing.JButton();
+        cbxTipoTrompeta = new javax.swing.JComboBox<>();
+        cbxMarcaTrompeta = new javax.swing.JComboBox<>();
+        btnCancelar = new javax.swing.JButton();
+        txtCantidadPistonesTrompeta = new javax.swing.JTextField();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
+        setResizable(false);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel1.setFont(new java.awt.Font("Times New Roman", 1, 20)); // NOI18N
+        jLabel1.setText("Modificar trompetas");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 30, -1, -1));
+
+        btnAtras.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        btnAtras.setText("Atras");
+        btnAtras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAtrasActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnAtras, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 11, 82, -1));
+
+        btnSalir.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        btnSalir.setText("Salir");
+        btnSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalirActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 10, 82, -1));
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel4.setText("Tipo : ");
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 180, -1, -1));
+
+        cbxCodigoTrompeta.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        cbxCodigoTrompeta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbxCodigoTrompetaActionPerformed(evt);
+            }
+        });
+        getContentPane().add(cbxCodigoTrompeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 110, 189, 30));
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel5.setText("Marca :");
+        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 220, -1, -1));
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel6.setText("Color :");
+        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(37, 266, -1, -1));
+
+        lblTrompeta.setBackground(new java.awt.Color(255, 255, 255));
+        lblTrompeta.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        getContentPane().add(lblTrompeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 120, 233, 280));
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel7.setText("Tamaño :");
+        getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(37, 313, -1, -1));
+        getContentPane().add(txtTamanoTrompeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 310, 189, 29));
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel8.setText("N° pistones : ");
+        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 370, -1, -1));
+
+        jLabel9.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel9.setText("Cantidad : ");
+        getContentPane().add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 470, -1, -1));
+        getContentPane().add(txtCantidadTrompeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 460, 189, 29));
+
+        jLabel10.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel10.setText("Codigo trompeta : ");
+        getContentPane().add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 117, -1, 20));
+
+        tblTrompeta.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane1.setViewportView(tblTrompeta);
+
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 540, 590, 80));
+        getContentPane().add(txtDireccionImagen, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 410, 230, 29));
+        getContentPane().add(txtColorTrompeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(169, 262, 189, 29));
+
+        jLabel12.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel12.setText("Precio : ");
+        getContentPane().add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 420, -1, -1));
+        getContentPane().add(txtPrecioTrompeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 410, 189, 29));
+
+        jLabel13.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel13.setText("Tabla de referencia de trompetas ingresadas :");
+        getContentPane().add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 520, -1, -1));
+
+        btnSeleccionar.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        btnSeleccionar.setText("Seleccionar");
+        btnSeleccionar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSeleccionarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnSeleccionar, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 460, 100, -1));
+
+        btnModificar.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        btnModificar.setText("Modificar");
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnModificar, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 460, 100, -1));
+
+        cbxTipoTrompeta.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        cbxTipoTrompeta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbxTipoTrompetaActionPerformed(evt);
+            }
+        });
+        getContentPane().add(cbxTipoTrompeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 180, 189, 30));
+
+        cbxMarcaTrompeta.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        cbxMarcaTrompeta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbxMarcaTrompetaActionPerformed(evt);
+            }
+        });
+        getContentPane().add(cbxMarcaTrompeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 220, 189, 30));
+
+        btnCancelar.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 500, 100, -1));
+        getContentPane().add(txtCantidadPistonesTrompeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 360, 189, 29));
+
+        pack();
+    }// </editor-fold>                        
+
+    private void btnAtrasActionPerformed(java.awt.event.ActionEvent evt) {                                         
+        // TODO add your handling code here:
+
+        dispose();
+        ModificarViento modificarviento = new ModificarViento();
+        modificarviento.setVisible(true);
+    }                                        
+
+    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {                                         
+        // TODO add your handling code here:
+
+        int opc = JOptionPane.showConfirmDialog(rootPane, "¿Seguro que desea cerrar el programa?", "Alerta", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (opc == JOptionPane.YES_OPTION) {
+            dispose();
+        }
+    }                                        
+
+    private void cbxCodigoTrompetaActionPerformed(java.awt.event.ActionEvent evt) {                                                  
+        try {           
+            cargarDatos(rs);
+        } catch (SQLException ex) {
+            Logger.getLogger(ModificarTrompeta.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ModificarTrompeta.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }                                                 
+
+    private void btnSeleccionarActionPerformed(java.awt.event.ActionEvent evt) {                                               
+        // TODO add your handling code here:
+        
+        int opc = JOptionPane.showConfirmDialog(rootPane, "¿Seguro que desea modificar este registro?", "Alerta", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (opc == JOptionPane.YES_OPTION) {            
+            desbloquearCampos();
+            cbxCodigoTrompeta.setEnabled(false);
+            btnSeleccionar.setEnabled(false);
+            btnModificar.setEnabled(true);
+            btnCancelar.setEnabled(true);
+        }
+        
+    }                                              
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {                                             
+        // TODO add your handling code here:
+        
+        
+        int opc = JOptionPane.showConfirmDialog(rootPane, "¿Seguro que desea guardar los cambios?", "Alerta", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (opc == JOptionPane.YES_OPTION) {
+            desbloquearCampos();
+            String modificar;
+            modificar = "UPDATE Trompeta set tipo_trompeta = '" + (String) cbxTipoTrompeta.getSelectedItem() + "', marca_trompeta = '" + (String) cbxMarcaTrompeta.getSelectedItem() + "', color_trompeta = '" + txtColorTrompeta.getText() + "', tamano_trompeta = '" + txtTamanoTrompeta.getText() + "', cantidad_pistones_trompeta = '" + txtCantidadPistonesTrompeta.getText() + "',  precio_trompeta = '" + txtPrecioTrompeta.getText() + "', cantidad_trompeta = '" + txtCantidadTrompeta.getText() + "' where codigo_trompeta='"+cbxCodigoTrompeta.getSelectedItem()+"'";
+            try {
+                PreparedStatement pst = cn.prepareStatement(modificar);
+                
+                int i;
+                i = pst.executeUpdate();
+                
+                if(i > 0){
+                    JOptionPane.showMessageDialog(null, "Se guardo correctamente");
+                    mostrarTabla();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ModificarTrompeta.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            bloquearCampos();
+            cbxCodigoTrompeta.setEnabled(true);
+            btnSeleccionar.setEnabled(true);
+            btnModificar.setEnabled(false);
+            btnCancelar.setEnabled(false);
+        }
+        
+        
+    }                                            
+
+    private void cbxTipoTrompetaActionPerformed(java.awt.event.ActionEvent evt) {                                                
+        // TODO add your handling code here:
+    }                                               
+
+    private void cbxMarcaTrompetaActionPerformed(java.awt.event.ActionEvent evt) {                                                 
+        // TODO add your handling code here:
+    }                                                
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {                                            
+        // TODO add your handling code here:
+        
+        int opc = JOptionPane.showConfirmDialog(rootPane, "¿Seguro que desea cancelar la modificación?", "Alerta", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (opc == JOptionPane.YES_OPTION) {
+            
+            try {
+                cargarDatos(rs);
+            } catch (SQLException | IOException ex) {
+                Logger.getLogger(ModificarTrompeta.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            bloquearCampos();
+            cbxCodigoTrompeta.setEnabled(true);
+            btnSeleccionar.setEnabled(true);
+            btnModificar.setEnabled(false);
+            btnCancelar.setEnabled(false);
+        }
+    }                                           
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(ModificarTrompeta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(ModificarTrompeta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(ModificarTrompeta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(ModificarTrompeta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new ModificarTrompeta().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify                     
+    private javax.swing.JButton btnAtras;
+    private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnModificar;
+    private javax.swing.JButton btnSalir;
+    private javax.swing.JButton btnSeleccionar;
+    private javax.swing.JComboBox<String> cbxCodigoTrompeta;
+    private javax.swing.JComboBox<String> cbxMarcaTrompeta;
+    private javax.swing.JComboBox<String> cbxTipoTrompeta;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblTrompeta;
+    private javax.swing.JTable tblTrompeta;
+    private javax.swing.JTextField txtCantidadPistonesTrompeta;
+    private javax.swing.JTextField txtCantidadTrompeta;
+    private javax.swing.JTextField txtColorTrompeta;
+    private javax.swing.JTextField txtDireccionImagen;
+    private javax.swing.JTextField txtPrecioTrompeta;
+    private javax.swing.JTextField txtTamanoTrompeta;
+    // End of variables declaration                   
+}
